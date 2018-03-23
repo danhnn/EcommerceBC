@@ -32,4 +32,8 @@ contract Store {
     Product memory product = productIdInStore[_productId];
     return (product.id,product.name,product.category,product.imageLink, product.description, product.price, product.status);
   }
+
+  function getTotalProduct() view public returns(uint) {
+    return productIndex;
+  }
 }
