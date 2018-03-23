@@ -1,17 +1,18 @@
-var SimpleStorage = artifacts.require("./SimpleStorage.sol");
+var EscrowEngine = artifacts.require("EscrowEngine");
+var Escrow = artifacts.require("Escrow");
 
-contract('SimpleStorage', function(accounts) {
+contract('EscrowEngine', async(accounts) => {
+  let escrowEngineInstance;
 
-  it("...should store the value 89.", function() {
-    return SimpleStorage.deployed().then(function(instance) {
-      simpleStorageInstance = instance;
+  beforeEach('setup contract for each test', async function () {
+    escrowEngineInstance = await EscrowEngine.deployed();
+    await escrowEngineInstance.createContract(accounts[1],"Shoes ID HASH", {from: accounts[0], value: web3.toWei(1,"ether")});
+  })
 
-      return simpleStorageInstance.set(89, {from: accounts[0]});
-    }).then(function() {
-      return simpleStorageInstance.get.call();
-    }).then(function(storedData) {
-      assert.equal(storedData, 89, "The value 89 was not stored.");
-    });
+  it("...should store account0 as contract buyer.", async () => {
+      let storeData = await escrowEngineInstance.getContractOfUser(accounts[0]);
+      let escrowContract = Escrow.at(storeData[0]);
+      let result = await escrowContract.buyer();
+      assert.equal(accounts[0], result, "Wrong buyer");
   });
-
 });

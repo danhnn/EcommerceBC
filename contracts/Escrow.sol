@@ -6,21 +6,21 @@ EscrowEngine.deployed().then(function(i){ return i.createContract(web3.eth.accou
 EscrowEngine.deployed().then(function(i){ return i.getContract();})
 */
 contract EscrowEngine {
-    address public escrowContractAddress;
     event EsscrowCreate(address newAddress);
     mapping(address => address[]) contractList;
+
     function EscrowEngine() {
         
     }
 
-     function createContract(address _seller, bytes32 _description) public payable {
-        escrowContractAddress = address((new Escrow).value(msg.value)(_seller, msg.sender, _description));
+    function createContract(address _seller, bytes32 _description) public payable {
+        address escrowContractAddress = address((new Escrow).value(msg.value)(_seller, msg.sender, _description));
         contractList[msg.sender].push(escrowContractAddress);
         EsscrowCreate(escrowContractAddress);
     }
 
-    function getContract() returns (address) {
-      return escrowContractAddress;
+    function getContractOfUser(address user) view public returns (address[]) {
+      return contractList[user];
     }
 }
 
