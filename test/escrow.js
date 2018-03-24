@@ -12,7 +12,7 @@ contract('EscrowEngine', async (accounts) => {
   beforeEach('setup contract for each test', async function () {
     escrowEngineInstance = await EscrowEngine.deployed();
     await escrowEngineInstance.createContract(seller, desc, { from: buyer, value: web3.toWei(valueBuy, "ether") });
-    let storeData = await escrowEngineInstance.getContractOfUser(buyer);
+    let storeData = await escrowEngineInstance.getContractsOfBuyer(buyer);
     const latestContract = storeData[storeData.length - 1];
     escrowContract = Escrow.at(latestContract);
     console.log("Escrow Contract address = ", latestContract)
@@ -45,7 +45,6 @@ contract('EscrowEngine', async (accounts) => {
     assert.notEqual(0, parseInt(result), "Wrong buyerOk");
  
     let balanceAfter = web3.fromWei(parseInt(web3.eth.getBalance(seller)),"ether");
-    //const expectedResult = parseFloat(balanceBefore) + parseFloat(valueBuy);
     assert.isAbove(balanceAfter , balanceBefore, "Wrong seller balance");
   });
 
@@ -54,6 +53,7 @@ contract('EscrowEngine', async (accounts) => {
     await escrowContract.reject();
     let resultB = await escrowContract.buyerReject();
     assert.notEqual(0, parseInt(resultB), "Wrong buyerReject");
+
     let resultS = await escrowContract.sellerReject();
     assert.equal(0, parseInt(resultS), "Wrong sellerReject");
     
@@ -66,10 +66,16 @@ contract('EscrowEngine', async (accounts) => {
     await escrowContract.reject({from: seller});
     let resultB = await escrowContract.buyerReject();
     assert.equal(0, parseInt(resultB), "Wrong buyerReject");
+    
     let resultS = await escrowContract.sellerReject();
     assert.notEqual(0, parseInt(resultS), "Wrong sellerReject");
     
     let balanceAfter = web3.fromWei(parseInt(web3.eth.getBalance(buyer)),"ether");
     assert.isAbove(balanceAfter , balanceBefore, "Wrong buyer balance");
+  });
+
+  it("...should get right product quantity form the buyer.", async () => {
+    let result = await escrowEngineInstance.getContractsOfBuyer(buyer);
+    assert.equal(8, result.length, "Wrong product quantity");
   });
 });

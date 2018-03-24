@@ -15,6 +15,7 @@ contract Store {
     string description;
     uint price;
     ProductStatus status;
+    address creator;
   }
 
   function Store() {
@@ -23,14 +24,14 @@ contract Store {
 
   function addProduct(string _name, string _category, string _imageLink, string _description, uint _price) {
     productIndex += 1;
-    Product memory product = Product(productIndex, _name, _category, _imageLink, _description, _price, ProductStatus.Unsold);
+    Product memory product = Product(productIndex, _name, _category, _imageLink, _description, _price, ProductStatus.Unsold, msg.sender);
     stores[msg.sender][productIndex] = product;
     productIdInStore[productIndex] = product;
   }
 
-  function getProduct(uint _productId) view public returns (uint, string, string, string, string, uint, ProductStatus) {
+  function getProduct(uint _productId) view public returns (uint, string, string, string, string, uint, ProductStatus, address) {
     Product memory product = productIdInStore[_productId];
-    return (product.id,product.name,product.category,product.imageLink, product.description, product.price, product.status);
+    return (product.id,product.name,product.category,product.imageLink, product.description, product.price, product.status, product.creator);
   }
 
   function getTotalProduct() view public returns(uint) {

@@ -7,7 +7,8 @@ EscrowEngine.deployed().then(function(i){ return i.getContract();})
 */
 contract EscrowEngine {
     event EsscrowCreate(address newAddress);
-    mapping(address => address[]) contractList;
+    mapping(address => address[]) contractListBuyer;
+    mapping(address => address[]) contractListSeller;
 
     function EscrowEngine() {
         
@@ -15,12 +16,17 @@ contract EscrowEngine {
 
     function createContract(address _seller, bytes32 _description) public payable {
         address escrowContractAddress = address((new Escrow).value(msg.value)(_seller, msg.sender, _description));
-        contractList[msg.sender].push(escrowContractAddress);
+        contractListBuyer[msg.sender].push(escrowContractAddress);
+        contractListBuyer[_seller].push(escrowContractAddress);
         EsscrowCreate(escrowContractAddress);
     }
 
-    function getContractOfUser(address user) view public returns (address[]) {
-      return contractList[user];
+    function getContractsOfBuyer(address user) view public returns (address[]) {
+      return contractListBuyer[user];
+    }
+
+    function getContractsOfSeller(address user) view public returns (address[]) {
+      return contractListSeller[user];
     }
 }
 
