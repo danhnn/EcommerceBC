@@ -44,7 +44,7 @@ class BuyerPage extends Component {
       const storeInstance = await store.deployed();
       this.state.storeInstance = storeInstance;
       const escrowEngineInstance = await escrowEngine.deployed();
-      this.state.escrowEngineInstance = escrowEngineInstance;
+      this.setState({escrowEngineInstance});
 
       //await storeInstance.addProduct("Shoes", "Sport", "IPFS_LINK", "Best shoes ever", this.state.web3.toWei(0.1, "ether"), { from: accounts[0], gas: 400000 });
       this.getAllProduct();
@@ -66,10 +66,19 @@ class BuyerPage extends Component {
     this.state.escrowEngineInstance.createContract(p[7], p[0], { from: this.state.web3.defaulAccount, value: this.state.web3.toWei(p[5], "ether") });
   }
 
+  renderAddress() {
+    if (this.state.web3) {
+      return this.state.web3.eth.defaultAccount;
+    }
+
+    return "unindentify"
+  }
+
   render() {
     return (
       <div style={{ marginLeft:30 }}>
-        <h1>Buyer Page </h1>
+        <h3>Buyer Page </h3>
+        <p>Address: {this.renderAddress()}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 10, flexDirection: 'row' }}>
 
           <ListProducts web3={this.state.web3} onBuyPress={(p) => this.onBuyPress(p)} products={this.state.products} />
