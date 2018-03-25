@@ -50,14 +50,14 @@ class ListProducts extends Component {
                 {p[4]}
               </Typography>
 
-              <Button size="small" color="primary">
+              <Button onClick={() => this.onBuyPress(p)} size="small" color="primary">
                 Buy
               </Button>
             </CardContent>
           </div>
           <CardMedia
             className={classes.cover}
-            image={shoes}
+            image={'http://localhost:8080/ipfs/'+ p[3]}
           />
         </Card>
       </div>
@@ -87,7 +87,7 @@ const styles = ({
   cover: {
     width: 100,
     height: 90,
-    marginRight: 10
+    margin: 10
   },
 });
 

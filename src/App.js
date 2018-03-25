@@ -17,7 +17,7 @@ class App extends Component {
           <Route exact path="/" component={LoginPage} />
           <Route path="/buyer/" component={BuyerPage} />
           <Route path="/seller" component={SellerPage} />
-          <Route path="/transaction" component={TransactionPage} />
+          <Route path="/transaction/:from" component={TransactionPage} />
         </div>
       </Router>
     );

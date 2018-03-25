@@ -73,7 +73,8 @@ class SellerPage extends Component {
 
     return "unindentify"
   }
-
+  
+  
   _handleImageChange(e) {
     e.preventDefault();
 
@@ -88,10 +89,10 @@ class SellerPage extends Component {
     }
     reader.readAsDataURL(file);
 
-    let readerBuffer = new FileReader();
+    let readerBuffer = new window.FileReader();
     readerBuffer.readAsArrayBuffer(file);
-    reader.onload = () => {
-      var arrayBuffer = reader.result
+    readerBuffer.onloadend = () => {
+      var arrayBuffer = readerBuffer.result
       this.setState({
         arrayBuffer: arrayBuffer
       });
@@ -105,9 +106,7 @@ class SellerPage extends Component {
   }
 
   async saveProduct() {
-    console.log(1)
     let res = await this.saveImageOnIpfs();
-    console.log(2)
     this.state.imageLink = res[0].hash;
     console.log("Final state = ", this.state);
 
@@ -122,9 +121,23 @@ class SellerPage extends Component {
     }
   }
 
-  saveImageOnIpfs() {
+  onTransactionClick() {
+    this.props.history.push("/transaction/seller");
+  }
+
+  async saveImageOnIpfs() {
     const buffer = Buffer.from(this.state.arrayBuffer);
     return ipfs.add(buffer);
+  }
+
+  renderBalance() {
+    if (!this.state.web3 || !this.state.web3.eth.defaultAccount) {
+      return 0;
+    }
+
+    const balance = this.state.web3.fromWei(parseInt(this.state.web3.eth.getBalance(this.state.web3.eth.defaultAccount)), "ether");
+    console.log("Balance ", balance)
+    return balance;
   }
 
   render() {
@@ -132,8 +145,14 @@ class SellerPage extends Component {
 
     return (
       <div style={{ marginLeft: 30 }}>
-        <h3>Seller Page</h3>
+         <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between' }}>
+          <h2 style={{ color:'green' }}>Seller Page </h2>
+          <Button style={{ height:45 }} onClick={() => this.onTransactionClick()} variant="raised" color="primary" >
+            Transaction Page
+         </Button>
+        </div>
         <p>Address: {this.renderAddress()}</p>
+        <p>Balance: {this.renderBalance()} ether</p>
         <h4 style={{ color: 'red' }}>Add product:</h4>
 
         <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -185,7 +204,7 @@ class SellerPage extends Component {
           Add
       </Button>
 
-        <SweetAlert style={{ width: 250, marginLeft: 200, marginTop: -100 }} show={this.state.isShowAlert} type={this.state.alertBoxType} title={this.state.alertBoxTitle} onConfirm={() => { this.hideAlert() }}>
+        <SweetAlert style={{ width: 250, marginLeft: 200, marginTop: -150 }} show={this.state.isShowAlert} type={this.state.alertBoxType} title={this.state.alertBoxTitle} onConfirm={() => { this.hideAlert() }}>
           {this.state.alertBoxContent}
         </SweetAlert>
       </div>

@@ -6,7 +6,8 @@ contract Store {
   uint public productIndex;
   mapping (address => mapping(uint => Product)) stores;
   mapping (uint => Product) productIdInStore;
-
+  event ProductAdded(uint value);
+  
   struct Product {
     uint id;
     string name;
@@ -27,6 +28,7 @@ contract Store {
     Product memory product = Product(productIndex, _name, _category, _imageLink, _description, _price, ProductStatus.Unsold, msg.sender);
     stores[msg.sender][productIndex] = product;
     productIdInStore[productIndex] = product;
+    ProductAdded(productIndex);
   }
 
   function getProduct(uint _productId) view public returns (uint, string, string, string, string, uint, ProductStatus, address) {

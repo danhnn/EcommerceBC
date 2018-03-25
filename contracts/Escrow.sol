@@ -17,7 +17,7 @@ contract EscrowEngine {
     function createContract(address _seller, bytes32 _description) public payable {
         address escrowContractAddress = address((new Escrow).value(msg.value)(_seller, msg.sender, _description));
         contractListBuyer[msg.sender].push(escrowContractAddress);
-        contractListBuyer[_seller].push(escrowContractAddress);
+        contractListSeller[_seller].push(escrowContractAddress);
         EsscrowCreate(escrowContractAddress);
     }
 
